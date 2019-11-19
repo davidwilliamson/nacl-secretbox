@@ -1,3 +1,27 @@
+# ignore Mac in misc stuff
+.DS_Store
+
+# Editor cruft
+*~
+*.tmp
+.*.swp
+
+# VisualStudio code config files
+.vscode
+.env
+
+# kdiff3
+*.orig
+
+# any sort of certs or keys
+*.pem
+*.pub
+*.key
+*.cert
+id_rsa*
+
+# our datafile
 CryptData.dat
 
+# our binary
 bin/*
