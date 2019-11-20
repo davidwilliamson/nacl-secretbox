@@ -19,6 +19,7 @@ Currently in proof of concept state: proof we can encrypt and decrypt the data
 `./bin/nacl-secretbox`
 
 ## TODO
+- Unit tests
 - Create a backup file on update
 - Handle multiple records
 - Ability to change master password
