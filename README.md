@@ -1,22 +1,37 @@
-https://godoc.org/golang.org/x/crypto/nacl/secretbox
+# Secret Box
 
-https://godoc.org/golang.org/x/crypto/nacl/secretbox#example-package
+## What it is
 
-A worked example
-https://godoc.org/github.com/andmarios/crypto/nacl/saltsecret
+A program to sequrely store data to disk.  Uses golang's implementation of [NaCl](https://godoc.org/golang.org/x/crypto/nacl/secretbox) to encrypt/decrypt.
 
-TODO
-1. have master passphrase be provided in either env or user prompt
-2. CLI to support CRUD operations
+Currently in proof of concept state: proof we can encrypt and decrypt the data
+- Read data from STDIN
+- Encrypt data, write encrypted data out to file
+- Read file and decrypt contents
+- Display decrypted data to STDOUT
+
+## Build
+
+`make build`
+
+## Run
+
+`./bin/nacl-secretbox`
+
+## TODO
+- Create a backup file on update
+- Handle multiple records
+- Ability to change master password
+- Save master password hint in data file
+- CLI to support CRUD operations
    - new record
    - find record and display
    - modify record
    - delete record
    - dump all records with obscured passwords
-   - sort output (golang sort.Slice(list, sortFunc) method
-3. search using command line flag ./secretbox -f 'website'
-4. command line flag for name of datafile
-5. create a backup file on update
-6. run in container with datafile as external mount
-7. Ability to read binary files (pdf, jpg) into secret box;
-   ability to write them back out as clear files.
+   - sort output (Use `golang sort.Slice(list, sortFunc)`)
+- Ability to work with binary files (pdf, jpg) in secret box
+- YAML file templates for different record types
+- Allow master passphrase be provided in either env or user prompt
+- Multiple data files: command line flag for name of datafile
+- run in Docker container with datafile as external mount
