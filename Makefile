@@ -5,12 +5,6 @@ VERSION=$(MAJOR).$(MINOR)
 
 APP_NAME = $(shell basename $$PWD)
 
-# Relative to $GOPATH/src
-PROJECT_DIR= "github.com/davidwilliamson/$(APP_NAME)"
-
-# Our docker Hub account name
-HUB_NAMESPACE = "davidw135"
-
 # directories in this repo for artifacts
 BIN_DIR = "bin"
 TEST_RESULTS_DIR = "test-results"
@@ -20,7 +14,8 @@ $(eval MINOR_NEXT=$(shell echo $$(( ${MINOR} + 1)) ) )
 VERSION_NEXT = $(MAJOR).$(MINOR_NEXT)
 
 # Find go files and packages in this repo for go test
-GOPACKAGES=$(shell go list ${PROJECT_DIR}/... | grep -v -e /vendor/ )
+# GOPACKAGES=$(shell go list ${PROJECT_DIR}/... | grep -v -e /vendor/ )
+GOPACKAGES=$(shell go list | grep -v -e /vendor/ )
 GOFILES = $(shell find . -type f -name '*.go')
 GOFILES_NOVENDOR = $(shell find . -type f -name '*.go' -not -path "*/vendor/*")
 
@@ -46,14 +41,8 @@ default:
 	@echo "clean      : Remove files in ./${BIN_DIR}"
 	@echo "build      : Build the app; binary is ./${BIN_DIR}/${APP_NAME}"
 	@echo "run        : Build and run ./${BIN_DIR}/${APP_NAME}"
-	@echo "---------- Docker ----------"
-	@echo "image      : Build image ${HUB_NAMESPACE}/${APP_NAME}:${VERSION}"
-	@echo "push       : Build image ${HUB_NAMESPACE}/${APP_NAME}:${VERSION} and push to Hub"
-	@echo "clean-image: Run docker rmi ${HUB_NAMESPACE}/${APP_NAME}:${VERSION}"
 	@echo "---------- Release ---------"
 	@echo "tag        : Git tag master branch with ${VERSION}"
-	@echo "release    : Execute test, build, image, tag, push"
-	@echo "next-vers  : Prepare repo for ${VERSION_NEXT}"
 
 .PHONY: help
 help: default
@@ -78,30 +67,6 @@ build: clean version-check
 .PHONY: run
 run: build
 	@./${BIN_DIR}/${APP_NAME}
-
-#################################
-# Docker targets
-#################################
-.PHONY: clean-image
-clean-image: version-check
-	@echo "+ $@"
-	@docker rmi ${HUB_NAMESPACE}/${APP_NAME}:${VERSION}
-	@docker rmi ${HUB_NAMESPACE}/${APP_NAME}:latest
-
-.PHONY: image
-image: version-check
-	@echo "+ $@"
-	@docker build -t ${HUB_NAMESPACE}/${APP_NAME}:${VERSION} --build-arg VERSION=${VERSION} -f ./Dockerfile .
-	@docker tag ${HUB_NAMESPACE}/${APP_NAME}:${VERSION} ${HUB_NAMESPACE}/${APP_NAME}:latest
-	@docker images -q -f dangling=true | xargs docker rmi
-	@echo 'Done.'
-	@docker images --format '{{.Repository}}:{{.Tag}}\t\t Built: {{.CreatedSince}}\t\tSize: {{.Size}}' | grep ${APP_NAME}:${VERSION}
-
-.PHONY: push
-push: image
-	@echo "+ $@"
-	@docker push ${HUB_NAMESPACE}/${APP_NAME}:${VERSION}
-	@docker push ${HUB_NAMESPACE}/${APP_NAME}:latest
 
 #################################
 # test targets
@@ -142,14 +107,12 @@ test-static: check-fmt
 	@go vet ${GOPACKAGES}
 	@echo "golint ${GOPACKAGES}"
 	@golint ${GOPACKAGES}
+	@echo "ineffassign"
 	@ineffassign .
 
 #################################
 # release targets
 #################################
-.PHONY: release
-release: branch-check check-fmt test-static test build clean-image image tag push
-
 .PHONY: tag
 tag: version-check branch-check
 	@echo "+ $@"
@@ -158,29 +121,6 @@ tag: version-check branch-check
 	@git tag release/${VERSION} ${GIT_COMMIT}
 	@git tag -l -n
 	@git push --tags origin
-
-#
-# start work on next minor version of the code.
-# 1. make sure master is synced with origin/master
-#    git diff-index --quiet --cached HEAD -- (will fail if it's not)
-# 2. create a new branch named 'v0.2', etc.
-#    push that branch to origin and set that as upstream branch
-# 3. update this Makefile with new MINOR token
-# 4. commit and push the change to the Makefile as first commit on
-#    our new branch.
-.PHONY: next-vers
-next-vers:
-	@git fetch --all
-	@git fetch --prune
-	@git checkout master
-	@git pull --rebase
-	@git diff-index --quiet --cached HEAD --
-	@git checkout -b v${VERSION_NEXT}
-	@git push --set-upstream origin v${VERSION_NEXT}
-	@sed -i '.orig' -e 's/MINOR = ${MINOR}/MINOR = ${MINOR_NEXT}/' Makefile
-	@git add Makefile
-	@git commit -s -m 'Begin version ${VERSION_NEXT}'
-	@git push origin
 
 #################################
 # Utilities
