@@ -2,7 +2,7 @@
 
 ## What it is
 
-A program to sequrely store data to disk.  Uses golang's implementation of [NaCl](https://godoc.org/golang.org/x/crypto/nacl/secretbox) to encrypt/decrypt.
+A program to sequrely store data to disk. Uses golang's implementation of [NaCl](https://godoc.org/golang.org/x/crypto/nacl/secretbox) to encrypt/decrypt.
 
 Currently in proof of concept state: proof we can encrypt and decrypt the data
 - Read data from STDIN
@@ -20,8 +20,12 @@ Currently in proof of concept state: proof we can encrypt and decrypt the data
 
 ## TODO
 - Unit tests
+    - encrypt -> decrypt recreates the original Account struct (all fields match exactly)
+    - encrypt -> write-file -> read-file -> decrypt recreates original Account structs
+    - Two copies of the same Account encrypt to different strings (nonce is used correctly)
+    - Decrypting with wrong masterPassword casues error
+    - Decrypting with wrong masterPassword does not corrupt dataStore
 - Create a backup file on update
-- Handle multiple records
 - Ability to change master password
 - Save master password hint in data file
 - CLI to support CRUD operations

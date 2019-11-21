@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 )
@@ -29,13 +30,27 @@ func GetAccountInfoFromStdin() *Account {
 	return accountInfo
 }
 
-// Marshal will json serialze an Account struct
-func (acct *Account) Marshal() []byte {
+// Encrypt will encrupt the Account struct
+func (acct *Account) Encrypt(passPhrase string) (string, error) {
 	message, err := json.Marshal(acct)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return message
+	encryptedBytes := Encrypt(passPhrase, message)
+	encryptedString := hex.EncodeToString(encryptedBytes[:])
+	return encryptedString, nil
+}
+
+// DecryptAccount will take a hex-encoded string and return an Account struct
+func DecryptAccount(encryptedString, passPhrase string) (Account, error) {
+	var account Account
+	encryptedBytes, err := hex.DecodeString(encryptedString)
+	if err != nil {
+		return account, err
+	}
+	decryptedString := Decrypt(passPhrase, encryptedBytes)
+	err = json.Unmarshal(decryptedString, &account)
+	return account, err
 }
 
 // Display dumps the account info to STDOUT
