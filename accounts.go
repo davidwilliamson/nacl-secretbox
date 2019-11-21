@@ -37,3 +37,11 @@ func (acct *Account) Marshal() []byte {
 	}
 	return message
 }
+
+// Display dumps the account info to STDOUT
+func (acct *Account) Display() {
+	fmt.Printf("Site: %s\n", acct.Site)
+	fmt.Printf("User: %s\n", acct.Username)
+	fmt.Printf("Pass: %s\n", acct.Password)
+	fmt.Printf("Cmnt: %s\n", acct.Comment)
+}
