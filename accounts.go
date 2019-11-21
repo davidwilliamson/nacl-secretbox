@@ -9,6 +9,7 @@ import (
 // Account represents an online account
 type Account struct {
 	Site     string `json:"site"`
+	URL      string `json:"url"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Comment  string `json:"comment,omitempty"`
@@ -22,9 +23,10 @@ func NewAccount() *Account {
 // GetAccountInfoFromStdin prompts the user for data and returns a ptr to Account
 func GetAccountInfoFromStdin() *Account {
 	accountInfo := NewAccount()
-	accountInfo.Site = GetLineFromStdin("Enter Site -> ")
+	accountInfo.Site = GetLineFromStdin("Site name  -> ")
+	accountInfo.URL = GetLineFromStdin("URL        -> ")
 	accountInfo.Username = GetLineFromStdin("Username   -> ")
-	accountInfo.Password = GetLineFromStdin("Passeword  -> ")
+	accountInfo.Password = GetLineFromStdin("Password   -> ")
 	accountInfo.Comment = GetLineFromStdin("Comment    -> ")
 	fmt.Println()
 	return accountInfo
@@ -56,6 +58,7 @@ func DecryptAccount(encryptedString, passPhrase string) (Account, error) {
 // Display dumps the account info to STDOUT
 func (acct *Account) Display() {
 	fmt.Printf("Site: %s\n", acct.Site)
+	fmt.Printf("URL : %s\n", acct.URL)
 	fmt.Printf("User: %s\n", acct.Username)
 	fmt.Printf("Pass: %s\n", acct.Password)
 	fmt.Printf("Cmnt: %s\n", acct.Comment)
