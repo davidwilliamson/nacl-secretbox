@@ -19,7 +19,7 @@ Currently in proof of concept state: proof we can encrypt and decrypt the data
 `./bin/nacl-secretbox`
 
 ## TODO
-- Unit tests
+- Need Unit tests
     - encrypt -> decrypt recreates the original Account struct (all fields match exactly)
     - encrypt -> write-file -> read-file -> decrypt recreates original Account structs
     - Two copies of the same Account encrypt to different strings (nonce is used correctly)
@@ -27,7 +27,6 @@ Currently in proof of concept state: proof we can encrypt and decrypt the data
     - Decrypting with wrong masterPassword does not corrupt dataStore
 - Vendor golang.org/x/crypto/nacl/secretbox
 - Create a backup file on update
-- Ability to change master password
 - Save master password hint in data file
 - CLI to support CRUD operations
    - modify record
