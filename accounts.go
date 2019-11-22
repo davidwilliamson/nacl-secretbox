@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 // Account represents an online account
@@ -41,6 +42,11 @@ func (acct *Account) Encrypt(passPhrase string) (string, error) {
 	encryptedBytes := Encrypt(passPhrase, message)
 	encryptedString := hex.EncodeToString(encryptedBytes[:])
 	return encryptedString, nil
+}
+
+// ContainsStr returns true if string is found in Site or URL field
+func (acct *Account) ContainsStr(searchStr string) bool {
+	return strings.Contains(acct.Site, searchStr) || strings.Contains(acct.URL, searchStr)
 }
 
 // DecryptAccount will take a hex-encoded string and return an Account struct

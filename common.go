@@ -20,9 +20,15 @@ func GetLineFromStdin(prompt string) string {
 	return line
 }
 
-// getMasterPassphrase gets the master passphrase. Either from the environment
+// YesNo prompts the user for a yes or no
+func YesNo(prompt string) bool {
+	response := GetLineFromStdin(prompt)
+	return response == "y" || response == "yes" || response == "Y"
+}
+
+// GetMasterPassphrase gets the master passphrase. Either from the environment
 // or prompts the user to enter via STDIN
-func getMasterPassphrase() string {
+func GetMasterPassphrase() string {
 	passPhrase := os.Getenv("SECRET_BOX")
 	if passPhrase == "" {
 		fmt.Println("missing SECRET_BOX env var")

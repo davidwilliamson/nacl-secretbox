@@ -25,6 +25,10 @@ func ReadDataStore(passPhrase, dataFile string) ([]*Account, error) {
 	if err != nil {
 		panic(err)
 	}
+	// Empty file
+	if encryptedString == "" {
+		return accounts, nil
+	}
 	// The file format is:
 	// <encrypted-string-for-account1>\n
 	// <encrypted-string-for-account2>\n
